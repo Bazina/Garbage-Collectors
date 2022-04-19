@@ -37,18 +37,18 @@ public class Main {
         }
 
 
-        HashMap<Integer, Integer> Used_object = new HashMap<>();
+        HashMap<Integer, Integer> usedObject = new HashMap<>();
         for (Integer integer1 : root) {
             for (Integer integer : temp.keySet()) {
                 int key = integer;
                 int f;
                 if (integer1 == key) {
                     f = temp.get(key);
-                    Used_object.put(key, f);
+                    usedObject.put(key, f);
                     for (Integer value : temp.keySet()) {
                         int key2 = value;
                         if (f == key2) {
-                            Used_object.put(key2, temp.get(key2));
+                            usedObject.put(key2, temp.get(key2));
                         }
                     }
 
@@ -67,10 +67,10 @@ public class Main {
             System.out.println("Range_heap " + heap.get(key));
         }
         System.out.println("Used object");
-        for (Integer value : Used_object.keySet()) {
+        for (Integer value : usedObject.keySet()) {
             int key = value;
             System.out.println("\nchild " + key);
-            System.out.println("parent " + Used_object.get(key));
+            System.out.println("parent " + usedObject.get(key));
         }
 
 
@@ -83,8 +83,8 @@ public class Main {
         for (Integer i : root) {
             Mark.put(i, true);
             int x = i;
-            while (Used_object.containsKey(x)) {
-                x = Used_object.get(x);
+            while (usedObject.containsKey(x)) {
+                x = usedObject.get(x);
                 System.out.println("\nchild " + x);
                 if (Mark.get(x)) break;
                 Mark.put(x, true);
