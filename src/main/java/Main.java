@@ -1,4 +1,3 @@
-package com.company;
 import java.io.*;
 import java.util.*;
 
@@ -17,44 +16,39 @@ public class Main {
         /////////Heap//////////////////////////////////////////
         File myObj2 = new File("heap.txt");
         Scanner myReader2 = new Scanner(myObj2);
-        HashMap<Integer,List<Integer>> heap = new HashMap<Integer,List<Integer>>();
+        HashMap<Integer, List<Integer>> heap = new HashMap<>();
         while (myReader2.hasNextLine()) {
             String data = myReader2.nextLine();
-            String[] res = data.split("[,]", 0);
-            heap.put( Integer.parseInt(res[0]) , new ArrayList<Integer>());
-            for (int i=1;i<res.length; i++) {
-                heap.get(Integer.parseInt(res[0])).add( Integer.parseInt(res[i]));
+            String[] res = data.split(",", 0);
+            heap.put(Integer.parseInt(res[0]), new ArrayList<>());
+            for (int i = 1; i < res.length; i++) {
+                heap.get(Integer.parseInt(res[0])).add(Integer.parseInt(res[i]));
             }
         }
 
         /////////pointers//////////////////////////////////////////
         File myObj3 = new File("pointers.txt");
         Scanner myReader3 = new Scanner(myObj3);
-        HashMap<Integer,Integer> temp = new HashMap<Integer,Integer>();
+        HashMap<Integer, Integer> temp = new HashMap<>();
         while (myReader3.hasNextLine()) {
             String data = myReader3.nextLine();
-            String[] res = data.split("[,]", 0);
-            temp.put(Integer.parseInt(res[1]),Integer.parseInt(res[0]));
+            String[] res = data.split(",", 0);
+            temp.put(Integer.parseInt(res[1]), Integer.parseInt(res[0]));
         }
 
 
-        HashMap<Integer,Integer> Used_object = new HashMap<Integer,Integer>();
-        for(int j=0;j<root.size();j++)
-        {
-            Iterator i = temp.keySet().iterator();
-            while (i.hasNext()) {
-                int key = (int) i.next();
+        HashMap<Integer, Integer> Used_object = new HashMap<>();
+        for (Integer integer1 : root) {
+            for (Integer integer : temp.keySet()) {
+                int key = integer;
                 int f;
-                if(root.get(j) == key )
-                {
-                    f= temp.get(key);
-                    Used_object.put(key ,f);
-                    Iterator z = temp.keySet().iterator();
-                    while (z.hasNext()) {
-                        int key2 = (int) z.next();
-                        if(f == key2 )
-                        {
-                            Used_object.put(key2,temp.get(key2));
+                if (integer1 == key) {
+                    f = temp.get(key);
+                    Used_object.put(key, f);
+                    for (Integer value : temp.keySet()) {
+                        int key2 = value;
+                        if (f == key2) {
+                            Used_object.put(key2, temp.get(key2));
                         }
                     }
 
@@ -80,33 +74,33 @@ public class Main {
         }
 
 
-        HashMap<Integer, Boolean> Mark = new HashMap<Integer,Boolean>();
+        HashMap<Integer, Boolean> Mark = new HashMap<>();
 
         for (Integer item : heap.keySet()) {
-            Mark.put(item,false);
+            Mark.put(item, false);
         }
 
         for (Integer i : root) {
-            Mark.put(i,true);
-            int x=i;
-            while(Used_object.containsKey(x)){
-                x=Used_object.get(x);
+            Mark.put(i, true);
+            int x = i;
+            while (Used_object.containsKey(x)) {
+                x = Used_object.get(x);
                 System.out.println("\nchild " + x);
-                if(Mark.get(x))break;
-                Mark.put(x,true);
+                if (Mark.get(x)) break;
+                Mark.put(x, true);
             }
         }
 
         for (Integer item : Mark.keySet()) {
-            if (!Mark.get(item)){
+            if (!Mark.get(item)) {
                 heap.remove(item);
             }
         }
 
         try {
-            File Mark_And_Sweap_file = new File("out1.txt");
-            if (Mark_And_Sweap_file.createNewFile()) {
-                System.out.println("File created: " + Mark_And_Sweap_file.getName());
+            File markAndSweepFile = new File("out1.txt");
+            if (markAndSweepFile.createNewFile()) {
+                System.out.println("File created: " + markAndSweepFile.getName());
             } else {
                 System.out.println("File already exists.");
             }
@@ -117,8 +111,7 @@ public class Main {
 
         FileWriter myWriter = new FileWriter("out1.txt");
         for (Integer item : heap.keySet()) {
-            int key = item;
-            myWriter.write(item + ","+heap.get(item).get(0)+","+heap.get(item).get(1)+"\n");
+            myWriter.write(item + "," + heap.get(item).get(0) + "," + heap.get(item).get(1) + "\n");
         }
         myWriter.close();
 
