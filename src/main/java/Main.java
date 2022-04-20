@@ -1,8 +1,6 @@
 import java.io.*;
 import java.util.*;
-
 public class Main {
-
     public static List<Integer> root = new ArrayList<>();
     public static HashMap<Integer, List<Integer>> heapMap = new HashMap<>();
     public static Map<Integer,  List<Integer>> heap;
@@ -10,7 +8,6 @@ public class Main {
     public static HashMap<Integer, Integer> usedObject = new HashMap<>();
     public static sortingHashmap sort = new sortingHashmap();
     public static HashMap<Integer, Boolean> Mark = new HashMap<>();
-
     public static int starting;
     public static void compact(int x){
         int cost= heap.get(x).get(1)- heap.get(x).get(0);
@@ -23,8 +20,6 @@ public class Main {
         for (Integer item : heap.keySet()) {
             Mark.put(item, false);
         }
-
-
         for (Integer i : root) {
             Mark.put(i, true);
             int x = i;
@@ -40,9 +35,6 @@ public class Main {
                 heap.remove(item);
             }
         }
-//////////////////////////////////////////////
-
-
         try {
             File markAndSweepFile = new File("Mark and Sweep.txt");
             if (markAndSweepFile.createNewFile()) {
@@ -61,21 +53,12 @@ public class Main {
             myWriter.write(item + "," + heap.get(item).get(0) + "," + heap.get(item).get(1) + "\n");
         }
         myWriter.close();
-
-
-
-
-
 /////////////////////////////////////////////////////////////
-
     }
-
     public static void markAndCompact() throws IOException {
         for (Integer item : heap.keySet()) {
             Mark.put(item, false);
         }
-
-
         for (Integer i : root) {
             Mark.put(i, true);
             int x = i;
@@ -86,7 +69,6 @@ public class Main {
                 Mark.put(x, true);
             }
         }
-
         for (Integer item : heap.keySet()) {
             if (Mark.get(item)) {
                 compact(item);
@@ -98,10 +80,7 @@ public class Main {
                 heap.remove(item);
             }
         }
-
 //////////////////////////////////////////////
-
-
         try {
             File markAndCompactFile = new File("Mark and Compact.txt");
             if (markAndCompactFile.createNewFile()) {
@@ -120,14 +99,7 @@ public class Main {
             myWriter.write(item + "," + heap.get(item).get(0) + "," + heap.get(item).get(1) + "\n");
         }
         myWriter.close();
-
-
-
-
-
-
 /////////////////////////////////////////////////////////////
-
     }
     public static void main(String[] args) throws IOException {
         starting=-1;
@@ -160,8 +132,6 @@ public class Main {
             String[] res = data.split(",", 0);
             temp.put(Integer.parseInt(res[1]), Integer.parseInt(res[0]));
         }
-
-
         for (Integer integer1 : root) {
             for (Integer integer : temp.keySet()) {
                 int key = integer;
@@ -196,15 +166,8 @@ public class Main {
             System.out.println("\nchild " + key);
             System.out.println("parent " + usedObject.get(key));
         }
-
-//        markAndSweep();
-
-
+        markAndSweep();
         markAndCompact();
-
-
-
-
         System.out.println("heap");
         for (Integer item : heap.keySet()) {
             int key = item;
@@ -212,5 +175,4 @@ public class Main {
             System.out.println("Range_heap " + heap.get(key));
         }
     }
-
 }
