@@ -73,9 +73,7 @@ public class Main {
             System.out.println("parent " + usedObject.get(key));
         }
 
-
         HashMap<Integer, Boolean> Mark = new HashMap<>();
-
         for (Integer item : heap.keySet()) {
             Mark.put(item, false);
         }
@@ -108,19 +106,21 @@ public class Main {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-
+        sortingHashmap sort = new sortingHashmap();
+        Map<Integer,  List<Integer>> hm1 = sort.sortByValue(heap);
         FileWriter myWriter = new FileWriter("out1.txt");
-        for (Integer item : heap.keySet()) {
-            myWriter.write(item + "," + heap.get(item).get(0) + "," + heap.get(item).get(1) + "\n");
+        for (Integer item : hm1.keySet()) {
+
+            myWriter.write(item + "," + hm1.get(item).get(0) + "," + hm1.get(item).get(1) + "\n");
         }
         myWriter.close();
 
 
         System.out.println("heap");
-        for (Integer item : heap.keySet()) {
+        for (Integer item : hm1.keySet()) {
             int key = item;
             System.out.println("\nobject_identifier " + key);
-            System.out.println("Range_heap " + heap.get(key));
+            System.out.println("Range_heap " + hm1.get(key));
         }
     }
 
