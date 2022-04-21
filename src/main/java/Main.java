@@ -2,10 +2,11 @@ import java.io.*;
 import java.util.*;
 public class Main {
     public static List<Integer> root = new ArrayList<>();
+    public static List<Integer> usedObject = new ArrayList<>();
     public static HashMap<Integer, List<Integer>> heapMap = new HashMap<>();
     public static Map<Integer,  List<Integer>> heap;
     public static HashMap<Integer, Integer> temp = new HashMap<>();
-    public static HashMap<Integer, Integer> usedObject = new HashMap<>();
+    //public static HashMap<Integer, Integer> usedObject = new HashMap<>();
     public static sortingHashmap sort = new sortingHashmap();
     public static HashMap<Integer, Boolean> Mark = new HashMap<>();
     public static int starting;
@@ -20,15 +21,19 @@ public class Main {
         for (Integer item : heap.keySet()) {
             Mark.put(item, false);
         }
-        for (Integer i : root) {
+        for (Integer i : usedObject) {
             Mark.put(i, true);
+            /*
             int x = i;
-            while (usedObject.containsKey(x)) {
+
+            while (usedObject.contains(x)) {
                 x = usedObject.get(x);
                 System.out.println("\n\n\nchild " + x);
                 if (Mark.get(x)) break;
                 Mark.put(x, true);
             }
+
+             */
         }
         for (Integer item : Mark.keySet()) {
             if (!Mark.get(item)) {
@@ -59,15 +64,18 @@ public class Main {
         for (Integer item : heap.keySet()) {
             Mark.put(item, false);
         }
-        for (Integer i : root) {
+        for (Integer i : usedObject) {
             Mark.put(i, true);
+            /*
             int x = i;
-            while (usedObject.containsKey(x)) {
+            while (usedObject.contains(x)) {
                 x = usedObject.get(x);
                 System.out.println("\n\n\nchild " + x);
                 if (Mark.get(x)) break;
                 Mark.put(x, true);
             }
+            */
+
         }
         for (Integer item : heap.keySet()) {
             if (Mark.get(item)) {
@@ -133,25 +141,20 @@ public class Main {
             temp.put(Integer.parseInt(res[1]), Integer.parseInt(res[0]));
         }
         for (Integer integer1 : root) {
+            usedObject.add(integer1);
             for (Integer integer : temp.keySet()) {
                 int key = integer;
-                int f;
-                if (integer1 == key) {
-                    f = temp.get(key);
-                    usedObject.put(key, f);
-                    for (Integer value : temp.keySet()) {
-                        int key2 = value;
-                        if (f == key2) {
-                            usedObject.put(key2, temp.get(key2));
-                        }
-                    }
-
+                if (integer1 == temp.get(key)) {
+                    usedObject.add(key);
                 }
             }
-
         }
         System.out.println("root");
         for (Integer element : root) {
+            System.out.println(element);
+        }
+        System.out.println("Used object");
+        for (Integer element : usedObject) {
             System.out.println(element);
         }
         System.out.println("heap");
@@ -160,14 +163,9 @@ public class Main {
             System.out.println("\nobject_identifier " + key);
             System.out.println("Range_heap " + heapMap.get(key));
         }
-        System.out.println("Used object");
-        for (Integer value : usedObject.keySet()) {
-            int key = value;
-            System.out.println("\nchild " + key);
-            System.out.println("parent " + usedObject.get(key));
-        }
+
         markAndSweep();
-        markAndCompact();
+       markAndCompact();
         System.out.println("heap");
         for (Integer item : heap.keySet()) {
             int key = item;
