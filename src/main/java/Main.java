@@ -131,7 +131,7 @@ public class Main {
                 heapMap.get(Integer.parseInt(res[0])).add(Integer.parseInt(res[i]));
             }
         }
-        heap = sort.sortByValue(heapMap);
+        heap = sortingHashmap.sortByValue(heapMap);
         /////////pointers//////////////////////////////////////////
         File myObj3 = new File("pointers.txt");
         Scanner myReader3 = new Scanner(myObj3);
