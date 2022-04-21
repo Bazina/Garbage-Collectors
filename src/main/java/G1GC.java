@@ -1,97 +1,75 @@
+import Utilities.HeapObject;
+import Utilities.InputHandler;
+
+import java.awt.*;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 public class G1GC {
-    private final String heapFile, rootsFile, pointersFile, newHeapFile;
 
-    private final Double heapSize, blockSize;
+    private final int blockSize;
     private final List<Integer> roots;
-    private final List<Point2D.Double> pointers;
+    private final List<Point> pointers;
     private final List<region> regions;
-    private final HashMap<Integer, Point2D.Double> regionsObjects;
+    private final HashMap<Integer, Point> regionsObjects;
     private final HashMap<Integer, Boolean> mark;
-    private HashMap<Integer, Point2D.Double> heap;
+    private HashMap<Integer, HeapObject> heap;
 
-    public G1GC(Double size, String heap, String roots, String pointers, String newHeap) throws IOException {
-        this.heapFile = heap;
-        this.rootsFile = roots;
-        this.pointersFile = pointers;
-        this.newHeapFile = newHeap;
-        this.heapSize = size;
+    public static void main(String[] args) throws IOException {
+        InputHandler inputHandler = new InputHandler(Arrays.copyOfRange(args, 1, args.length));
+        new G1GC(Integer.parseInt(args[0]), inputHandler);
+    }
+
+    public G1GC(int size, InputHandler inputHandler) throws IOException {
+        inputHandler.parse();
 
         //assuming heap starts from 0
-        this.blockSize = this.heapSize / 16;
+        this.blockSize = size / 16;
 
-        this.roots = new ArrayList<>();
-        this.pointers = new ArrayList<>();
         this.regions = new ArrayList<>();
-        this.heap = new HashMap<>();
         this.mark = new HashMap<>();
         this.regionsObjects = new HashMap<>();
 
-        startClean();
+        this.roots = inputHandler.getRoot();
+        this.pointers = inputHandler.getPointers();
+        this.heap = inputHandler.getHeap();
+
+        startClean(inputHandler);
     }
 
-    private void startClean() throws IOException {
+    private void startClean(InputHandler inputHandler) throws IOException {
         collectData();
         divideHeap();
         markPhase();
         sweepPhase();
         finalPhase();
-        writeData();
+        inputHandler.printMapHeap(heap);
     }
 
-    private void collectData() throws FileNotFoundException {
-        //reading roots
-        File myObj = new File(rootsFile);
-        Scanner myReader = new Scanner(myObj);
-        while (myReader.hasNextLine()) {
-            String data = myReader.nextLine();
-            roots.add(Integer.parseInt(data));
-        }
-
-        //reading heap
-        myObj = new File(heapFile);
-        myReader = new Scanner(myObj);
-        while (myReader.hasNextLine()) {
-            String data = myReader.nextLine();
-            String[] res = data.split(",", 0);
-            heap.put(Integer.parseInt(res[0]), new Point2D.Double(Double.parseDouble(res[1]), Double.parseDouble(res[2])));
-            mark.put(Integer.parseInt(res[0]), false);
-        }
-
-        //reading pointers
-        myObj = new File(pointersFile);
-        myReader = new Scanner(myObj);
-        while (myReader.hasNextLine()) {
-            String data = myReader.nextLine();
-            String[] res = data.split(",", 0);
-            pointers.add(new Point2D.Double(Double.parseDouble(res[0]), Double.parseDouble(res[1])));
-        }
+    private void collectData() {
+        for (Map.Entry<Integer, HeapObject> item : heap.entrySet())
+            mark.put(item.getKey(), false);
     }
 
     private void divideHeap() {
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 16; i++)
             regions.add(new region(blockSize));
-        }
 
-        for (Map.Entry<Integer, Point2D.Double> item : heap.entrySet()) {
+        for (Map.Entry<Integer, HeapObject> item : heap.entrySet()) {
 
-            double startMemory = item.getValue().x;
-            double endMemory = item.getValue().y;
-            double objSize = (item.getValue().y - item.getValue().x);
-            int startRegionNum = (int) (startMemory / blockSize);
-            int endRegionNum = (int) (endMemory / blockSize);
+            int startMemory = item.getValue().getStartingAddress();
+            int endMemory = item.getValue().getEndingAddress();
+            int objSize = (item.getValue().getEndingAddress() - item.getValue().getStartingAddress());
+            int startRegionNum = startMemory / blockSize;
+            int endRegionNum = endMemory / blockSize;
 
             if (startRegionNum == endRegionNum) {
                 region desiredRegion = regions.get(startRegionNum);
                 desiredRegion.addObject(item.getKey(), objSize);
 
-                regionsObjects.put(item.getKey(), new Point2D.Double(startRegionNum, -1));
+                regionsObjects.put(item.getKey(), new Point(startRegionNum, -1));
             } else {
                 region endRegion;
                 region startRegion = regions.get(startRegionNum);
@@ -102,7 +80,7 @@ public class G1GC {
                     endRegion.addObject(item.getKey(), endMemory - endRegionNum * blockSize);
                 } else endRegionNum = -1;
 
-                regionsObjects.put(item.getKey(), new Point2D.Double(startRegionNum, endRegionNum));
+                regionsObjects.put(item.getKey(), new Point(startRegionNum, endRegionNum));
             }
         }
     }
@@ -116,9 +94,9 @@ public class G1GC {
     private void DFS(int root) {
         if (mark.get(root)) return;
         mark.put(root, true);
-        for (Point2D.Double pointer : pointers) {
+        for (Point pointer : pointers) {
             if (pointer.x == root) {
-                DFS((int) pointer.y);
+                DFS(pointer.y);
             }
         }
     }
@@ -127,36 +105,36 @@ public class G1GC {
         for (Map.Entry<Integer, Boolean> item : mark.entrySet()) {
             if (!item.getValue()) {
                 heap.remove(item.getKey());
-                Point2D.Double associateRegions = regionsObjects.get(item.getKey());
+                Point associateRegions = regionsObjects.get(item.getKey());
 
-                regions.get((int) associateRegions.x).removeObject(item.getKey());
-                if ((int) associateRegions.y != -1) regions.get((int) associateRegions.y).removeObject(item.getKey());
+                regions.get(associateRegions.x).removeObject(item.getKey());
+                if (associateRegions.y != -1) regions.get(associateRegions.y).removeObject(item.getKey());
             }
         }
     }
 
     private void finalPhase() {
-        HashMap<Integer, Point2D.Double> newHeap = new HashMap<>();
+        HashMap<Integer, HeapObject> newHeap = new HashMap<>();
         List<Integer> freeRegions = new ArrayList<>();
 
         for (int i = 0; i < regions.size(); i++) {
             if (regions.get(i).empty) freeRegions.add(i);
         }
 
-        for (Map.Entry<Integer, Point2D.Double> item : heap.entrySet()) {
-            double objSize = item.getValue().y - item.getValue().x;
+        for (Map.Entry<Integer, HeapObject> item : heap.entrySet()) {
+            int objSize = item.getValue().getEndingAddress() - item.getValue().getStartingAddress();
             for (var i : freeRegions) {
                 var currentRegion = regions.get(i);
                 if (objSize <= currentRegion.free) {
-                    double newStart = i * blockSize + (blockSize - currentRegion.free);
+                    int newStart = i * blockSize + (blockSize - currentRegion.free);
                     currentRegion.addObject(item.getKey(), objSize);
 
-                    newHeap.put(item.getKey(), new Point2D.Double(newStart, newStart + objSize));
+                    newHeap.put(item.getKey(), new HeapObject(item.getKey(), newStart, newStart + objSize));
 
-                    Point2D.Double associateRegions = regionsObjects.get(item.getKey());
-                    regions.get((int) associateRegions.x).removeObject(item.getKey());
-                    if ((int) associateRegions.y != -1)
-                        regions.get((int) associateRegions.y).removeObject(item.getKey());
+                    Point associateRegions = regionsObjects.get(item.getKey());
+                    regions.get(associateRegions.x).removeObject(item.getKey());
+                    if (associateRegions.y != -1)
+                        regions.get(associateRegions.y).removeObject(item.getKey());
 
                     break;
                 }
@@ -165,35 +143,26 @@ public class G1GC {
 
         this.heap = newHeap;
     }
-
-    private void writeData() throws IOException {
-        FileWriter fileWriter = new FileWriter(newHeapFile);
-        for (Map.Entry<Integer, Point2D.Double> item : heap.entrySet()) {
-            fileWriter.write(item.getKey() + "," + item.getValue().x + "," + item.getValue().y + "\n");
-        }
-        fileWriter.close();
-    }
-
 }
 
 class region {
-    Double free, total;
+    int free, total;
     boolean empty;
     List<Point2D.Double> reservedObjects;
 
-    public region(Double size) {
+    public region(int size) {
         this.free = this.total = size;
         this.empty = true;
         this.reservedObjects = new ArrayList<>();
     }
 
-    public void addObject(Integer obj, Double size) {
+    public void addObject(int obj, int size) {
         reservedObjects.add(new Point2D.Double(obj, size));
         this.free -= size;
         this.empty = false;
     }
 
-    public void removeObject(Integer obj) {
+    public void removeObject(int obj) {
         double size = 0;
         for (int i = 0; i < reservedObjects.size(); i++) {
             if (reservedObjects.get(i).x == obj) {
@@ -203,6 +172,6 @@ class region {
             }
         }
         this.free += size;
-        if (this.free.equals(this.total)) this.empty = true;
+        if (this.free == this.total) this.empty = true;
     }
 }
