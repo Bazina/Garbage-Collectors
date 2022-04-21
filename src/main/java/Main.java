@@ -1,22 +1,25 @@
 import java.io.*;
 import java.util.*;
+
 public class Main {
     public static List<Integer> root = new ArrayList<>();
     public static List<Integer> usedObject = new ArrayList<>();
     public static HashMap<Integer, List<Integer>> heapMap = new HashMap<>();
-    public static Map<Integer,  List<Integer>> heap;
+    public static Map<Integer, List<Integer>> heap;
     public static HashMap<Integer, Integer> temp = new HashMap<>();
     //public static HashMap<Integer, Integer> usedObject = new HashMap<>();
     public static sortingHashmap sort = new sortingHashmap();
     public static HashMap<Integer, Boolean> Mark = new HashMap<>();
     public static int starting;
-    public static void compact(int x){
-        int cost= heap.get(x).get(1)- heap.get(x).get(0);
+
+    public static void compact(int x) {
+        int cost = heap.get(x).get(1) - heap.get(x).get(0);
         heap.get(x).clear();
         heap.get(x).add(starting);
-        starting+=cost;
+        starting += cost;
         heap.get(x).add(starting);
     }
+
     public static void markAndSweep() throws IOException {
         for (Integer item : heap.keySet()) {
             Mark.put(item, false);
@@ -60,6 +63,7 @@ public class Main {
         myWriter.close();
 /////////////////////////////////////////////////////////////
     }
+
     public static void markAndCompact() throws IOException {
         for (Integer item : heap.keySet()) {
             Mark.put(item, false);
@@ -109,8 +113,9 @@ public class Main {
         myWriter.close();
 /////////////////////////////////////////////////////////////
     }
+
     public static void main(String[] args) throws IOException {
-        starting=-1;
+        starting = -1;
         ////////ROOT///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         File myObj = new File("root.txt");
         Scanner myReader = new Scanner(myObj);
@@ -120,20 +125,20 @@ public class Main {
         }
 
         /////////Heap//////////////////////////////////////////
-        File myObj2 = new File("heap.txt");
+        File myObj2 = new File("heap.csv");
         Scanner myReader2 = new Scanner(myObj2);
         while (myReader2.hasNextLine()) {
             String data = myReader2.nextLine();
             String[] res = data.split(",", 0);
-            starting=starting==-1? Integer.parseInt(res[1]) :starting;
+            starting = starting == -1 ? Integer.parseInt(res[1]) : starting;
             heapMap.put(Integer.parseInt(res[0]), new ArrayList<>());
             for (int i = 1; i < res.length; i++) {
                 heapMap.get(Integer.parseInt(res[0])).add(Integer.parseInt(res[i]));
             }
         }
-        heap = sortingHashmap.sortByValue(heapMap);
+        heap = sort.sortByValue(heapMap);
         /////////pointers//////////////////////////////////////////
-        File myObj3 = new File("pointers.txt");
+        File myObj3 = new File("pointers.csv");
         Scanner myReader3 = new Scanner(myObj3);
         while (myReader3.hasNextLine()) {
             String data = myReader3.nextLine();
@@ -166,8 +171,8 @@ public class Main {
 
         markAndSweep();
         markAndCompact();
-        new G1GC(1800.0,"M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\heap.txt" , "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\root.txt" ,
-                "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\pointers.txt" , "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\out1.txt") ;
+        new G1GC(1800.0, "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\heap.txt", "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\root.txt",
+                "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\pointers.txt", "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\out1.txt");
         System.out.println("heap");
         for (Integer item : heap.keySet()) {
             int key = item;

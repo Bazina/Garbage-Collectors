@@ -1,5 +1,4 @@
-import eu.hansolo.tilesfx.tools.Point;
-
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -11,11 +10,11 @@ public class G1GC {
 
     private final Double heapSize, blockSize;
     private final List<Integer> roots;
-    private final List<Point> pointers;
+    private final List<Point2D.Double> pointers;
     private final List<region> regions;
-    private final HashMap<Integer, Point> regionsObjects;
+    private final HashMap<Integer, Point2D.Double> regionsObjects;
     private final HashMap<Integer, Boolean> mark;
-    private HashMap<Integer, Point> heap;
+    private HashMap<Integer, Point2D.Double> heap;
 
     public G1GC(Double size, String heap, String roots, String pointers, String newHeap) throws IOException {
         this.heapFile = heap;
@@ -61,7 +60,7 @@ public class G1GC {
         while (myReader.hasNextLine()) {
             String data = myReader.nextLine();
             String[] res = data.split(",", 0);
-            heap.put(Integer.parseInt(res[0]), new Point(Double.parseDouble(res[1]), Double.parseDouble(res[2])));
+            heap.put(Integer.parseInt(res[0]), new Point2D.Double(Double.parseDouble(res[1]), Double.parseDouble(res[2])));
             mark.put(Integer.parseInt(res[0]), false);
         }
 
@@ -71,7 +70,7 @@ public class G1GC {
         while (myReader.hasNextLine()) {
             String data = myReader.nextLine();
             String[] res = data.split(",", 0);
-            pointers.add(new Point(Double.parseDouble(res[0]), Double.parseDouble(res[1])));
+            pointers.add(new Point2D.Double(Double.parseDouble(res[0]), Double.parseDouble(res[1])));
         }
     }
 
@@ -80,11 +79,11 @@ public class G1GC {
             regions.add(new region(blockSize));
         }
 
-        for (Map.Entry<Integer, Point> item : heap.entrySet()) {
+        for (Map.Entry<Integer, Point2D.Double> item : heap.entrySet()) {
 
-            Double startMemory = item.getValue().x;
-            Double endMemory = item.getValue().y;
-            Double objSize = (item.getValue().y - item.getValue().x);
+            double startMemory = item.getValue().x;
+            double endMemory = item.getValue().y;
+            double objSize = (item.getValue().y - item.getValue().x);
             int startRegionNum = (int) (startMemory / blockSize);
             int endRegionNum = (int) (endMemory / blockSize);
 
@@ -92,19 +91,18 @@ public class G1GC {
                 region desiredRegion = regions.get(startRegionNum);
                 desiredRegion.addObject(item.getKey(), objSize);
 
-                regionsObjects.put(item.getKey(), new Point(startRegionNum, -1));
+                regionsObjects.put(item.getKey(), new Point2D.Double(startRegionNum, -1));
             } else {
-                region endRegion = null ;
+                region endRegion;
                 region startRegion = regions.get(startRegionNum);
 
                 startRegion.addObject(item.getKey(), endRegionNum * blockSize - startMemory);
-                if (endMemory - endRegionNum * blockSize != 0 && endRegionNum != regions.size()){
-                        endRegion = regions.get(endRegionNum);
-                        endRegion.addObject(item.getKey(), endMemory - endRegionNum * blockSize);
-                }
-                else endRegionNum = -1;
+                if (endMemory - endRegionNum * blockSize != 0 && endRegionNum != regions.size()) {
+                    endRegion = regions.get(endRegionNum);
+                    endRegion.addObject(item.getKey(), endMemory - endRegionNum * blockSize);
+                } else endRegionNum = -1;
 
-                regionsObjects.put(item.getKey(), new Point(startRegionNum, endRegionNum));
+                regionsObjects.put(item.getKey(), new Point2D.Double(startRegionNum, endRegionNum));
             }
         }
     }
@@ -118,7 +116,7 @@ public class G1GC {
     private void DFS(int root) {
         if (mark.get(root)) return;
         mark.put(root, true);
-        for (Point pointer : pointers) {
+        for (Point2D.Double pointer : pointers) {
             if (pointer.x == root) {
                 DFS((int) pointer.y);
             }
@@ -129,7 +127,7 @@ public class G1GC {
         for (Map.Entry<Integer, Boolean> item : mark.entrySet()) {
             if (!item.getValue()) {
                 heap.remove(item.getKey());
-                Point associateRegions = regionsObjects.get(item.getKey());
+                Point2D.Double associateRegions = regionsObjects.get(item.getKey());
 
                 regions.get((int) associateRegions.x).removeObject(item.getKey());
                 if ((int) associateRegions.y != -1) regions.get((int) associateRegions.y).removeObject(item.getKey());
@@ -138,14 +136,14 @@ public class G1GC {
     }
 
     private void finalPhase() {
-        HashMap<Integer, Point> newHeap = new HashMap<>();
+        HashMap<Integer, Point2D.Double> newHeap = new HashMap<>();
         List<Integer> freeRegions = new ArrayList<>();
 
         for (int i = 0; i < regions.size(); i++) {
             if (regions.get(i).empty) freeRegions.add(i);
         }
 
-        for (Map.Entry<Integer, Point> item : heap.entrySet()) {
+        for (Map.Entry<Integer, Point2D.Double> item : heap.entrySet()) {
             double objSize = item.getValue().y - item.getValue().x;
             for (var i : freeRegions) {
                 var currentRegion = regions.get(i);
@@ -153,9 +151,9 @@ public class G1GC {
                     double newStart = i * blockSize + (blockSize - currentRegion.free);
                     currentRegion.addObject(item.getKey(), objSize);
 
-                    newHeap.put(item.getKey(), new Point(newStart, newStart + objSize));
+                    newHeap.put(item.getKey(), new Point2D.Double(newStart, newStart + objSize));
 
-                    Point associateRegions = regionsObjects.get(item.getKey());
+                    Point2D.Double associateRegions = regionsObjects.get(item.getKey());
                     regions.get((int) associateRegions.x).removeObject(item.getKey());
                     if ((int) associateRegions.y != -1)
                         regions.get((int) associateRegions.y).removeObject(item.getKey());
@@ -170,7 +168,7 @@ public class G1GC {
 
     private void writeData() throws IOException {
         FileWriter fileWriter = new FileWriter(newHeapFile);
-        for (Map.Entry<Integer, Point> item : heap.entrySet()) {
+        for (Map.Entry<Integer, Point2D.Double> item : heap.entrySet()) {
             fileWriter.write(item.getKey() + "," + item.getValue().x + "," + item.getValue().y + "\n");
         }
         fileWriter.close();
@@ -181,7 +179,7 @@ public class G1GC {
 class region {
     Double free, total;
     boolean empty;
-    List<Point> reservedObjects;
+    List<Point2D.Double> reservedObjects;
 
     public region(Double size) {
         this.free = this.total = size;
@@ -190,7 +188,7 @@ class region {
     }
 
     public void addObject(Integer obj, Double size) {
-        reservedObjects.add(new Point(obj, size));
+        reservedObjects.add(new Point2D.Double(obj, size));
         this.free -= size;
         this.empty = false;
     }
