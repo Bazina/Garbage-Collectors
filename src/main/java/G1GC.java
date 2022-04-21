@@ -89,20 +89,23 @@ public class G1GC {
             int endRegionNum = (int) (endMemory / blockSize);
 
             if (startRegionNum == endRegionNum) {
-                region desiredRegion = regions.get(startRegionNum - 1);
+                region desiredRegion = regions.get(startRegionNum);
                 desiredRegion.addObject(item.getKey(), objSize);
 
-                regionsObjects.put(item.getKey(), new Point(startRegionNum - 1, -1));
+                regionsObjects.put(item.getKey(), new Point(startRegionNum, -1));
             } else {
-                region startRegion = regions.get(startRegionNum - 1);
-                region endRegion = regions.get(endRegionNum - 1);
+                region endRegion = null ;
+                region startRegion = regions.get(startRegionNum);
 
                 startRegion.addObject(item.getKey(), endRegionNum * blockSize - startMemory);
-                if (endMemory - endRegionNum * blockSize != 0)
-                    endRegion.addObject(item.getKey(), endMemory - endRegionNum * blockSize);
+                if (endMemory - endRegionNum * blockSize != 0 && endRegionNum != regions.size()){
+
+                        endRegion = regions.get(endRegionNum);
+                        endRegion.addObject(item.getKey(), endMemory - endRegionNum * blockSize);
+                }
                 else endRegionNum = 0;
 
-                regionsObjects.put(item.getKey(), new Point(startRegionNum - 1, endRegionNum - 1));
+                regionsObjects.put(item.getKey(), new Point(startRegionNum, endRegionNum));
             }
         }
     }
@@ -147,8 +150,7 @@ public class G1GC {
             double objSize = item.getValue().y - item.getValue().x;
             for (var i : freeRegions) {
                 var currentRegion = regions.get(i);
-                if (objSize > currentRegion.free) continue;
-                else {
+                if (objSize <= currentRegion.free) {
                     double newStart = i * blockSize + (blockSize - currentRegion.free);
                     currentRegion.addObject(item.getKey(), objSize);
 
