@@ -6,7 +6,6 @@ public class Main {
     public static Map<Integer,  List<Integer>> heap;
     public static HashMap<Integer, Integer> temp = new HashMap<>();
     public static HashMap<Integer, Integer> usedObject = new HashMap<>();
-    public static sortingHashmap sort = new sortingHashmap();
     public static HashMap<Integer, Boolean> Mark = new HashMap<>();
     public static int starting;
     public static void compact(int x){
@@ -123,7 +122,7 @@ public class Main {
                 heapMap.get(Integer.parseInt(res[0])).add(Integer.parseInt(res[i]));
             }
         }
-        heap = sort.sortByValue(heapMap);
+        heap = sortingHashmap.sortByValue(heapMap);
         /////////pointers//////////////////////////////////////////
         File myObj3 = new File("pointers.txt");
         Scanner myReader3 = new Scanner(myObj3);
