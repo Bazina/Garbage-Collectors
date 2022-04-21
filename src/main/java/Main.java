@@ -165,7 +165,9 @@ public class Main {
         }
 
         markAndSweep();
-       markAndCompact();
+        markAndCompact();
+        new G1GC(1800.0,"M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\heap.txt" , "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\root.txt" ,
+                "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\pointers.txt" , "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\out1.txt") ;
         System.out.println("heap");
         for (Integer item : heap.keySet()) {
             int key = item;
