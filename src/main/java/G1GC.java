@@ -99,11 +99,10 @@ public class G1GC {
 
                 startRegion.addObject(item.getKey(), endRegionNum * blockSize - startMemory);
                 if (endMemory - endRegionNum * blockSize != 0 && endRegionNum != regions.size()){
-
                         endRegion = regions.get(endRegionNum);
                         endRegion.addObject(item.getKey(), endMemory - endRegionNum * blockSize);
                 }
-                else endRegionNum = 0;
+                else endRegionNum = -1;
 
                 regionsObjects.put(item.getKey(), new Point(startRegionNum, endRegionNum));
             }
