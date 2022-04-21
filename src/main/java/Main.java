@@ -117,7 +117,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         starting = -1;
         ////////ROOT///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        File myObj = new File("root.txt");
+        File myObj = new File("src/main/resources/root.txt");
         Scanner myReader = new Scanner(myObj);
         while (myReader.hasNextLine()) {
             String data = myReader.nextLine();
@@ -125,7 +125,7 @@ public class Main {
         }
 
         /////////Heap//////////////////////////////////////////
-        File myObj2 = new File("heap.csv");
+        File myObj2 = new File("src/main/resources/heap.csv");
         Scanner myReader2 = new Scanner(myObj2);
         while (myReader2.hasNextLine()) {
             String data = myReader2.nextLine();
@@ -138,7 +138,7 @@ public class Main {
         }
         heap = sort.sortByValue(heapMap);
         /////////pointers//////////////////////////////////////////
-        File myObj3 = new File("pointers.csv");
+        File myObj3 = new File("src/main/resources/pointers.csv");
         Scanner myReader3 = new Scanner(myObj3);
         while (myReader3.hasNextLine()) {
             String data = myReader3.nextLine();
@@ -171,6 +171,11 @@ public class Main {
 
         markAndSweep();
         markAndCompact();
+        /*
+        new G1GC(1800.0, "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\heap.txt", "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\root.txt",
+                "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\pointers.txt", "M:\\CSED\\YEAR 2\\Second Term\\SHEETS\\Garbage-Collectors\\out1.txt");
+                */
+
         System.out.println("heap");
         for (Integer item : heap.keySet()) {
             int key = item;
