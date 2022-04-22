@@ -80,6 +80,14 @@ public class MarkAndSweep {
                 }
             }
         }
+        for (int j=0;j<usedObject.size();j++) {
+            for (Integer integer : temp.keySet()) {
+                int key = integer;
+                if (usedObject.get(j) == temp.get(key) && !usedObject.contains(key)) {
+                    usedObject.add(key);
+                }
+            }
+        }
         System.out.println("root");
         for (Integer element : root) {
             System.out.println(element);
@@ -87,12 +95,6 @@ public class MarkAndSweep {
         System.out.println("Used object");
         for (Integer element : usedObject) {
             System.out.println(element);
-        }
-        System.out.println("heap");
-        for (Integer item : heapMap.keySet()) {
-            int key = item;
-            System.out.println("\nobject_identifier " + key);
-            System.out.println("Range_heap " + heapMap.get(key));
         }
         markAndSweep(args[3]);
         System.out.println("heap");
