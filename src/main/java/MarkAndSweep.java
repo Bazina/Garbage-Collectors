@@ -4,9 +4,10 @@ import java.util.*;
 public class MarkAndSweep {
     public static List<Integer> root = new ArrayList<>();
     public static List<Integer> usedObject = new ArrayList<>();
+    public static List<Integer> pointer1 = new ArrayList<>();
+    public static List<Integer> pointer2 = new ArrayList<>();
     public static HashMap<Integer, List<Integer>> heapMap = new HashMap<>();
     public static Map<Integer, List<Integer>> heap;
-    public static HashMap<Integer, Integer> temp = new HashMap<>();
     public static SortingHashmap sort = new SortingHashmap();
     public static HashMap<Integer, Boolean> Mark = new HashMap<>();
     public static int starting;
@@ -69,24 +70,23 @@ public class MarkAndSweep {
         while (myReader3.hasNextLine()) {
             String data = myReader3.nextLine();
             String[] res = data.split(",", 0);
-            temp.put(Integer.parseInt(res[1]), Integer.parseInt(res[0]));
+            pointer1.add(Integer.parseInt(res[0]));
+            pointer2.add(Integer.parseInt(res[1]));
         }
-        for (Integer integer1 : root) {
-            usedObject.add(integer1);
-            for (Integer integer : temp.keySet()) {
-                int key = integer;
-                if (integer1 == temp.get(key)) {
-                    usedObject.add(key);
+        for(int i=0;i<root.size();i++) {
+            if(!usedObject.contains(root.get(i)))
+            {
+                usedObject.add(root.get(i));
+            }
+            for (int j = 0; j < pointer1.size(); j++) {
+                if (usedObject.contains(pointer1.get(j)) && !usedObject.contains(pointer2.get(j))) {
+                    usedObject.add(pointer2.get(j));
                 }
             }
         }
-        for (int j=0;j<usedObject.size();j++) {
-            for (Integer integer : temp.keySet()) {
-                int key = integer;
-                if (usedObject.get(j) == temp.get(key) && !usedObject.contains(key)) {
-                    usedObject.add(key);
-                }
-            }
+        System.out.println("pointer1");
+        for (Integer element : pointer1) {
+            System.out.println(element);
         }
         System.out.println("root");
         for (Integer element : root) {
