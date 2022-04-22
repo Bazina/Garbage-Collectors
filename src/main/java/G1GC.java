@@ -3,6 +3,7 @@ import Utilities.InputHandler;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -10,8 +11,8 @@ import java.util.List;
 public class G1GC {
 
     private final int blockSize;
-    private final List<Integer> roots;
-    private final List<Point> pointers;
+    private List<Integer> roots;
+    private List<Point> pointers;
     private final List<region> regions;
     private final HashMap<Integer, Point> regionsObjects;
     private final HashMap<Integer, Boolean> mark;
@@ -23,8 +24,6 @@ public class G1GC {
     }
 
     public G1GC(int size, InputHandler inputHandler) throws IOException {
-        inputHandler.parse();
-
         //assuming heap starts from 0
         this.blockSize = size / 16;
 
@@ -32,15 +31,11 @@ public class G1GC {
         this.mark = new HashMap<>();
         this.regionsObjects = new HashMap<>();
 
-        this.roots = inputHandler.getRoot();
-        this.pointers = inputHandler.getPointers();
-        this.heap = inputHandler.getHeap();
-
         startClean(inputHandler);
     }
 
     private void startClean(InputHandler inputHandler) throws IOException {
-        collectData();
+        collectData(inputHandler);
         divideHeap();
         markPhase();
         sweepPhase();
@@ -48,7 +43,12 @@ public class G1GC {
         inputHandler.printMapHeap(heap);
     }
 
-    private void collectData() {
+    private void collectData(InputHandler inputHandler) throws FileNotFoundException {
+        inputHandler.parse();
+        this.roots = inputHandler.getRoot();
+        this.pointers = inputHandler.getPointers();
+        this.heap = inputHandler.getHeap();
+
         for (Map.Entry<Integer, HeapObject> item : heap.entrySet())
             mark.put(item.getKey(), false);
     }
