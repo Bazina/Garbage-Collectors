@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class sortingHashmap {
+public class SortingHashmap {
     public static HashMap<Integer, List<Integer>> sortByValue(HashMap<Integer, List<Integer>> hm) {
         List<Map.Entry<Integer, List<Integer>>> list =
                 new LinkedList<>(hm.entrySet());

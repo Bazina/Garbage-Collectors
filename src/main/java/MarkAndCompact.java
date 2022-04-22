@@ -1,31 +1,45 @@
-
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
-public class MarkandSweep {
+public class MarkAndCompact {
     public static List<Integer> root = new ArrayList<>();
     public static List<Integer> usedObject = new ArrayList<>();
     public static HashMap<Integer, List<Integer>> heapMap = new HashMap<>();
     public static Map<Integer, List<Integer>> heap;
     public static HashMap<Integer, Integer> temp = new HashMap<>();
-    public static sortingHashmap sort = new sortingHashmap();
+    public static SortingHashmap sort = new SortingHashmap();
     public static HashMap<Integer, Boolean> Mark = new HashMap<>();
     public static int starting;
-    public static void markAndSweep(String arg) throws IOException {
+    public static void compact(int x) {
+        int cost = heap.get(x).get(1) - heap.get(x).get(0);
+        heap.get(x).clear();
+        heap.get(x).add(starting);
+        starting += cost;
+        heap.get(x).add(starting);
+    }
+    public static void markAndCompact(String arg) throws IOException {
         for (Integer item : heap.keySet()) {
             Mark.put(item, false);
         }
         for (Integer i : usedObject) {
             Mark.put(i, true);
         }
+        for (Integer item : heap.keySet()) {
+            if (Mark.get(item)) {
+                compact(item);
+            }
+        }
         for (Integer item : Mark.keySet()) {
             if (!Mark.get(item)) {
                 heap.remove(item);
             }
         }
+//////////////////////////////////////////////
         try {
-            File markAndSweepFile = new File(arg);
-            if (markAndSweepFile.createNewFile()) {
-                System.out.println("File created: " + markAndSweepFile.getName());
+            File markAndCompactFile = new File(arg);
+            if (markAndCompactFile.createNewFile()) {
+                System.out.println("File created: " + markAndCompactFile.getName());
             } else {
                 System.out.println("File already exists.");
             }
@@ -33,6 +47,7 @@ public class MarkandSweep {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
+
         FileWriter myWriter = new FileWriter(arg);
         for (Integer item : heap.keySet()) {
 
@@ -94,7 +109,7 @@ public class MarkandSweep {
             System.out.println("\nobject_identifier " + key);
             System.out.println("Range_heap " + heapMap.get(key));
         }
-        markAndSweep(args[3]);
+        markAndCompact(args[3]);
         System.out.println("heap");
         for (Integer item : heap.keySet()) {
             int key = item;
