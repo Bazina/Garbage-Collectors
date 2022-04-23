@@ -17,6 +17,7 @@ public class InputHandler {
     private final List<Point> pointers = new ArrayList<>();
     private final HashMap<Integer, HeapObject> heap = new HashMap<>();
     private Scanner reader;
+    private int starting = -1;
 
 
     public InputHandler(String[] args) {
@@ -44,6 +45,7 @@ public class InputHandler {
         while (reader.hasNextLine()) {
             String data = reader.nextLine();
             String[] res = data.split(",", 0);
+            starting = starting == -1 ? Integer.parseInt(res[1]) : starting;
             heap.put(Integer.parseInt(res[0]),
                     new HeapObject(Integer.parseInt(res[0]), Integer.parseInt(res[1]), Integer.parseInt(res[2])));
         }
@@ -65,7 +67,7 @@ public class InputHandler {
 
         for (HeapObject object : heap)
             writer.write(object.getId() + "," +
-                           object.getStartingAddress() + "," + object.getEndingAddress() + "\n");
+                         object.getStartingAddress() + "," + object.getEndingAddress() + "\n");
         writer.close();
     }
 
@@ -99,5 +101,13 @@ public class InputHandler {
 
     public HashMap<Integer, HeapObject> getHeap() {
         return heap;
+    }
+
+    public int getStarting() {
+        return starting;
+    }
+
+    public void setStarting(int starting) {
+        this.starting = starting;
     }
 }

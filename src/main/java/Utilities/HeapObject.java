@@ -51,4 +51,12 @@ public class HeapObject {
     public void addChild(int childId) {
         children.add(childId);
     }
+
+    public void setStartingAddress(int startingAddress) {
+        this.startingAddress = startingAddress;
+    }
+
+    public void setEndingAddress(int endingAddress) {
+        this.endingAddress = endingAddress;
+    }
 }

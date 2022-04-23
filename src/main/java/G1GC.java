@@ -13,7 +13,7 @@ public class G1GC {
     private final int blockSize;
     private List<Integer> roots;
     private List<Point> pointers;
-    private final List<region> regions;
+    private final List<Region> regions;
     private final HashMap<Integer, Point> regionsObjects;
     private final HashMap<Integer, Boolean> mark;
     private HashMap<Integer, HeapObject> heap;
@@ -31,10 +31,10 @@ public class G1GC {
         this.mark = new HashMap<>();
         this.regionsObjects = new HashMap<>();
 
-        startClean(inputHandler);
+        startCleaning(inputHandler);
     }
 
-    private void startClean(InputHandler inputHandler) throws IOException {
+    private void startCleaning(InputHandler inputHandler) throws IOException {
         collectData(inputHandler);
         divideHeap();
         markPhase();
@@ -55,7 +55,7 @@ public class G1GC {
 
     private void divideHeap() {
         for (int i = 0; i < 16; i++)
-            regions.add(new region(blockSize));
+            regions.add(new Region(blockSize));
 
         for (Map.Entry<Integer, HeapObject> item : heap.entrySet()) {
 
@@ -66,13 +66,13 @@ public class G1GC {
             int endRegionNum = endMemory / blockSize;
 
             if (startRegionNum == endRegionNum) {
-                region desiredRegion = regions.get(startRegionNum);
+                Region desiredRegion = regions.get(startRegionNum);
                 desiredRegion.addObject(item.getKey(), objSize);
 
                 regionsObjects.put(item.getKey(), new Point(startRegionNum, -1));
             } else {
-                region endRegion;
-                region startRegion = regions.get(startRegionNum);
+                Region endRegion;
+                Region startRegion = regions.get(startRegionNum);
 
                 startRegion.addObject(item.getKey(), endRegionNum * blockSize - startMemory);
                 if (endMemory - endRegionNum * blockSize != 0 && endRegionNum != regions.size()) {
@@ -145,12 +145,12 @@ public class G1GC {
     }
 }
 
-class region {
+class Region {
     int free, total;
     boolean empty;
     List<Point2D.Double> reservedObjects;
 
-    public region(int size) {
+    public Region(int size) {
         this.free = this.total = size;
         this.empty = true;
         this.reservedObjects = new ArrayList<>();
