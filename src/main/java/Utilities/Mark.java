@@ -1,13 +1,12 @@
 package Utilities;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class Mark {
-    protected static final List<Integer> usedObject = new ArrayList<>();
+    protected static final List<HeapObject> usedObject = new ArrayList<>();
     protected static HashMap<Integer, HeapObject> heap;
     protected static final HashMap<Integer, Boolean> mark = new HashMap<>();
     protected static InputHandler inputHandler;
@@ -20,15 +19,28 @@ public class Mark {
         HashMap<Integer, HeapObject> heapMap = inputHandler.getHeap();
         heap = SortingHashmap.sortByValue(heapMap);
 
-        List<Point> pointers = inputHandler.getPointers();
-        /*
         for (Integer root : roots) {
-            if (!usedObject.contains(root))
-                usedObject.add(root);
-            for (Point pointer : pointers)
-                if (usedObject.contains(pointer.x) && !usedObject.contains(pointer.y))
-                    usedObject.add(pointer.y);
+            HeapObject rootObject = heap.get(root);
+
+            if (rootObject.isMark())
+                continue;
+
+            usedObject.add(rootObject);
+
+            rootObject.setMark(true);
         }
-         */
+
+        for (int i = 0; i < usedObject.size(); i++) {
+            for (Integer pointer : usedObject.get(i).getChildren()) {
+                HeapObject childObject = heap.get(pointer);
+
+                if (childObject.isMark())
+                    continue;
+
+                usedObject.add(childObject);
+
+                childObject.setMark(true);
+            }
+        }
     }
 }
