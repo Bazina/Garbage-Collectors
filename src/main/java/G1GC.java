@@ -5,23 +5,18 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class G1GC {
 
     private final int blockSize;
-    private List<Integer> roots;
-    private List<Point> pointers;
     private final List<Region> regions;
     private final HashMap<Integer, Point> regionsObjects;
     private final HashMap<Integer, Boolean> mark;
+    private List<Integer> roots;
+    private List<Point> pointers;
     private HashMap<Integer, HeapObject> heap;
-
-    public static void main(String[] args) throws IOException {
-        InputHandler inputHandler = new InputHandler(Arrays.copyOfRange(args, 1, args.length));
-        new G1GC(Integer.parseInt(args[0]), inputHandler);
-    }
 
     public G1GC(int size, InputHandler inputHandler) throws IOException {
         //assuming heap starts from 0
@@ -32,6 +27,11 @@ public class G1GC {
         this.regionsObjects = new HashMap<>();
 
         startCleaning(inputHandler);
+    }
+
+    public static void main(String[] args) throws IOException {
+        InputHandler inputHandler = new InputHandler(Arrays.copyOfRange(args, 1, args.length));
+        new G1GC(Integer.parseInt(args[0]), inputHandler);
     }
 
     private void startCleaning(InputHandler inputHandler) throws IOException {
@@ -116,12 +116,15 @@ public class G1GC {
     private void finalPhase() {
         HashMap<Integer, HeapObject> newHeap = new HashMap<>();
         List<Integer> freeRegions = new ArrayList<>();
+        Map<Integer, Boolean> changed = new HashMap<>();
 
         for (int i = 0; i < regions.size(); i++) {
             if (regions.get(i).empty) freeRegions.add(i);
         }
 
         for (Map.Entry<Integer, HeapObject> item : heap.entrySet()) {
+            changed.put(item.getKey(), false);
+
             int objSize = item.getValue().getEndingAddress() - item.getValue().getStartingAddress();
             for (var i : freeRegions) {
                 var currentRegion = regions.get(i);
@@ -136,8 +139,15 @@ public class G1GC {
                     if (associateRegions.y != -1)
                         regions.get(associateRegions.y).removeObject(item.getKey());
 
+                    changed.put(item.getKey(), true);
                     break;
                 }
+            }
+        }
+
+        for (Map.Entry<Integer, Boolean> item : changed.entrySet()) {
+            if (!item.getValue()) {
+                newHeap.put(item.getKey(), heap.get(item.getKey()));
             }
         }
 
