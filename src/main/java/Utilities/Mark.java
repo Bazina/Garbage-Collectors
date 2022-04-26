@@ -21,6 +21,7 @@ public class Mark {
         heap = SortingHashmap.sortByValue(heapMap);
 
         List<Point> pointers = inputHandler.getPointers();
+        /*
         for (Integer root : roots) {
             if (!usedObject.contains(root))
                 usedObject.add(root);
@@ -28,5 +29,6 @@ public class Mark {
                 if (usedObject.contains(pointer.x) && !usedObject.contains(pointer.y))
                     usedObject.add(pointer.y);
         }
+         */
     }
 }

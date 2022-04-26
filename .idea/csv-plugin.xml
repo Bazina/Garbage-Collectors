@@ -45,6 +45,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\heap.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\pointers.csv">
           <value>
             <Attribute>
