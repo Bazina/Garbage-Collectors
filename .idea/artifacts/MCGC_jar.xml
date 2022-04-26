@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MCGC:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/MCGC_jar</output-path>
+    <root id="archive" name="MCGC.jar">
+      <element id="module-output" name="GCs" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/MC/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>
