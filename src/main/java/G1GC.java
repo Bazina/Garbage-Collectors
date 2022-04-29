@@ -125,14 +125,14 @@ public class G1GC {
         for (Map.Entry<Integer, HeapObject> item : heap.entrySet()) {
             changed.put(item.getKey(), false);
 
-            int objSize = item.getValue().getEndingAddress() - item.getValue().getStartingAddress();
+            int objSize = item.getValue().getEndingAddress() - item.getValue().getStartingAddress() + 1;
             for (var i : freeRegions) {
                 var currentRegion = regions.get(i);
                 if (objSize <= currentRegion.free) {
-                    int newStart = i * blockSize + (blockSize - currentRegion.free);
+                    int newStart = i * blockSize + (blockSize - currentRegion.free) ;
                     currentRegion.addObject(item.getKey(), objSize);
 
-                    newHeap.put(item.getKey(), new HeapObject(item.getKey(), newStart, newStart + objSize));
+                    newHeap.put(item.getKey(), new HeapObject(item.getKey(), newStart, newStart + objSize - 1));
 
                     Point associateRegions = regionsObjects.get(item.getKey());
                     regions.get(associateRegions.x).removeObject(item.getKey());
