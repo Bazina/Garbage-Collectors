@@ -129,7 +129,7 @@ public class G1GC {
             for (var i : freeRegions) {
                 var currentRegion = regions.get(i);
                 if (objSize <= currentRegion.free) {
-                    int newStart = i * blockSize + (blockSize - currentRegion.free) ;
+                    int newStart = i * blockSize + (blockSize - currentRegion.free);
                     currentRegion.addObject(item.getKey(), objSize);
 
                     newHeap.put(item.getKey(), new HeapObject(item.getKey(), newStart, newStart + objSize - 1));
