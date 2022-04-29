@@ -9,6 +9,7 @@ public class MarkAndCompact extends Mark {
         heap.get(x).setStartingAddress(inputHandler.getStarting());
         inputHandler.setStarting(inputHandler.getStarting() + cost);
         heap.get(x).setEndingAddress(inputHandler.getStarting());
+        inputHandler.setStarting(inputHandler.getStarting() + 1);
     }
 
     public static void markAndCompact() throws IOException {

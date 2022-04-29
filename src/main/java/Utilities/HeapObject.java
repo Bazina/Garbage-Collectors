@@ -41,7 +41,7 @@ public class HeapObject {
         int delta = newStartingAddress - startingAddress;
         startingAddress = newStartingAddress;
         endingAddress += delta;
-        return endingAddress;
+        return endingAddress + 1;
     }
 
     public void setMark(boolean mark) {
