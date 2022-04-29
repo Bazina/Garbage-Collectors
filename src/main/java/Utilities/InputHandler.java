@@ -73,6 +73,7 @@ public class InputHandler {
 
     public void printMapHeap(HashMap<Integer, HeapObject> heap) throws IOException {
         FileWriter writer = createOutputFile();
+        heap = SortingHashmap.sortByValue(heap);
         for (Map.Entry<Integer, HeapObject> item : heap.entrySet()) {
             writer.write(item.getKey() + "," +
                          item.getValue().getStartingAddress() + "," + item.getValue().getEndingAddress() + "\n");
