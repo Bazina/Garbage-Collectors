@@ -78,6 +78,18 @@ class GCTest {
 
     @Test
     void test7() throws IOException {
+        CopyGC.main(new String[]{"src/main/resources/7/heap.csv", "src/main/resources/7/root.txt",
+                "src/main/resources/7/pointers.csv", "src/main/resources/7/OutC.csv"});
+        MarkAndSweep.main(new String[]{"src/main/resources/7/heap.csv", "src/main/resources/7/root.txt",
+                "src/main/resources/7/pointers.csv", "src/main/resources/7/OutMS.csv"});
+        MarkAndCompact.main(new String[]{"src/main/resources/7/heap.csv", "src/main/resources/7/root.txt",
+                "src/main/resources/7/pointers.csv", "src/main/resources/7/OutMC.csv"});
+        G1GC.main(new String[]{"1344", "src/main/resources/7/heap.csv", "src/main/resources/7/root.txt",
+                "src/main/resources/7/pointers.csv", "src/main/resources/7/OutG1.csv"});
+    }
+
+    @Test
+    void test8() throws IOException {
         CopyGC.main(new String[]{"src/main/resources/test/heap.csv", "src/main/resources/test/root.txt",
                 "src/main/resources/test/pointers.csv", "src/main/resources/test/OutC.csv"});
         MarkAndSweep.main(new String[]{"src/main/resources/test/heap.csv", "src/main/resources/test/root.txt",
