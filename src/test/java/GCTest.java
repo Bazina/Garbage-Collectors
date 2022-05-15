@@ -84,7 +84,7 @@ class GCTest {
                 "src/main/resources/test/pointers.csv", "src/main/resources/test/OutMS.csv"});
         MarkAndCompact.main(new String[]{"src/main/resources/test/heap.csv", "src/main/resources/test/root.txt",
                 "src/main/resources/test/pointers.csv", "src/main/resources/test/OutMC.csv"});
-        G1GC.main(new String[]{"256", "src/main/resources/test/heap.csv", "src/main/resources/test/root.txt",
+        G1GC.main(new String[]{"96", "src/main/resources/test/heap.csv", "src/main/resources/test/root.txt",
                 "src/main/resources/test/pointers.csv", "src/main/resources/test/OutG1.csv"});
     }
 }
